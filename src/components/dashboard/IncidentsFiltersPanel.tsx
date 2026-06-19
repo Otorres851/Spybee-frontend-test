@@ -49,7 +49,10 @@ export function IncidentsFiltersPanel({
 
   if (!open) return null;
 
-  const updateDraft = (key: keyof DashboardFilters, value: DashboardFilters[keyof DashboardFilters]) => {
+  const updateDraft = (
+    key: keyof DashboardFilters,
+    value: DashboardFilters[keyof DashboardFilters]
+  ) => {
     setDraftFilters((current) => ({ ...current, [key]: value }));
   };
 

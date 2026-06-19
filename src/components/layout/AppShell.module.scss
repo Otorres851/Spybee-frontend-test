@@ -7,8 +7,7 @@
 .authLoader {
   min-height: 100dvh;
   background:
-    radial-gradient(circle at center, rgba(255, 196, 0, 0.22), transparent 18rem),
-    var(--bg);
+    radial-gradient(circle at center, rgba(255, 196, 0, 0.22), transparent 18rem), var(--bg);
 }
 
 @media (min-width: 48rem) {

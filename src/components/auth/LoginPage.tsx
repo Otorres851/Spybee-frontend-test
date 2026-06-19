@@ -90,7 +90,14 @@ export function LoginPage() {
         <div className={styles.hero}>
           <div className={styles.brand} aria-label="Spybee">
             <span className={styles.logoMark} aria-hidden="true">
-              <Image src={spybeeLogo} alt="" width={52} height={52} className={styles.logoImage} priority />
+              <Image
+                src={spybeeLogo}
+                alt=""
+                width={52}
+                height={52}
+                className={styles.logoImage}
+                priority
+              />
             </span>
             <span className={styles.brandName}>
               <span>Spy</span>
@@ -129,7 +136,12 @@ export function LoginPage() {
               >
                 {lang.toUpperCase()}
               </button>
-              <button type="button" className={styles.themeButton} onClick={toggleTheme} aria-label={dark ? t.themeLight : t.themeDark}>
+              <button
+                type="button"
+                className={styles.themeButton}
+                onClick={toggleTheme}
+                aria-label={dark ? t.themeLight : t.themeDark}
+              >
                 {dark ? <Sun size={17} /> : <Moon size={17} />}
               </button>
             </div>
@@ -184,10 +196,16 @@ export function LoginPage() {
 
             <div className={styles.optionsRow}>
               <label className={styles.checkbox}>
-                <input type="checkbox" checked={remember} onChange={(event) => setRemember(event.target.checked)} />
+                <input
+                  type="checkbox"
+                  checked={remember}
+                  onChange={(event) => setRemember(event.target.checked)}
+                />
                 <span>{t.loginRemember}</span>
               </label>
-              <button type="button" className={styles.forgot}>{t.loginForgot}</button>
+              <button type="button" className={styles.forgot}>
+                {t.loginForgot}
+              </button>
             </div>
 
             {formError ? <p className={styles.formError}>{formError}</p> : null}

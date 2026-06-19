@@ -15,7 +15,12 @@ const appButtonVariants: Record<AppButtonVariant, string> = {
   soft: styles.soft,
 };
 
-export function AppButton({ children, variant = "primary", className = "", ...props }: AppButtonProps) {
+export function AppButton({
+  children,
+  variant = "primary",
+  className = "",
+  ...props
+}: AppButtonProps) {
   return (
     <button className={clsx(styles.button, appButtonVariants[variant], className)} {...props}>
       {children}

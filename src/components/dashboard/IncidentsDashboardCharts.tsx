@@ -98,14 +98,7 @@ function RadarChart({ items }: { items: CountItem[] }) {
           />
         ))}
         {axes.map((axis) => (
-          <line
-            key={axis.label}
-            x1={cx}
-            y1={cy}
-            x2={axis.gx}
-            y2={axis.gy}
-            className="radar-axis"
-          />
+          <line key={axis.label} x1={cx} y1={cy} x2={axis.gx} y2={axis.gy} className="radar-axis" />
         ))}
         <polygon points={polygon} className="radar-fill" />
         <polygon points={polygon} className="radar-stroke" />
@@ -296,9 +289,15 @@ function buildTrendByGranularity(incidents: Incident[], granularity: TrendGranul
 function TrendPanel({ model }: IncidentsDashboardChartsProps) {
   const t = useT();
   const [granularity, setGranularity] = useState<TrendGranularity>("week");
-  const trend = useMemo(() => buildTrendByGranularity(model.incidents, granularity), [model.incidents, granularity]);
+  const trend = useMemo(
+    () => buildTrendByGranularity(model.incidents, granularity),
+    [model.incidents, granularity]
+  );
   const trendItems = trend.length > 0 ? trend : model.trend;
-  const maxValue = Math.max(...trendItems.flatMap((item) => [item.created, item.closed, item.backlog]), 1);
+  const maxValue = Math.max(
+    ...trendItems.flatMap((item) => [item.created, item.closed, item.backlog]),
+    1
+  );
   const areaPoints = trendItems
     .map((item, index) => {
       const x = (index / Math.max(1, trendItems.length - 1)) * 1000;
@@ -334,18 +333,22 @@ function TrendPanel({ model }: IncidentsDashboardChartsProps) {
             "font-black sm:text-sm",
           ].join(" ")}
         >
-          {([
-            ["day", t.day],
-            ["week", t.week],
-            ["month", t.month],
-          ] as const).map(([value, label]) => (
+          {(
+            [
+              ["day", t.day],
+              ["week", t.week],
+              ["month", t.month],
+            ] as const
+          ).map(([value, label]) => (
             <button
               key={value}
               type="button"
               onClick={() => setGranularity(value)}
               className={[
                 "rounded-xl px-3 py-2 transition",
-                granularity === value ? "bg-[var(--panel)] shadow-sm" : "text-[var(--muted)] hover:text-[var(--text)]",
+                granularity === value
+                  ? "bg-[var(--panel)] shadow-sm"
+                  : "text-[var(--muted)] hover:text-[var(--text)]",
               ].join(" ")}
               aria-pressed={granularity === value}
             >
@@ -405,8 +408,15 @@ function TrendPanel({ model }: IncidentsDashboardChartsProps) {
 
 function DistributionPanel({ model }: IncidentsDashboardChartsProps) {
   const t = useT();
-  const tags = model.tags.length > 0 ? model.tags : [{ label: "Sin etiqueta", value: model.incidents.length }];
-  const palette = ["treemap-yellow", "treemap-blue", "treemap-green", "treemap-blue", "treemap-yellow"];
+  const tags =
+    model.tags.length > 0 ? model.tags : [{ label: "Sin etiqueta", value: model.incidents.length }];
+  const palette = [
+    "treemap-yellow",
+    "treemap-blue",
+    "treemap-green",
+    "treemap-blue",
+    "treemap-yellow",
+  ];
 
   return (
     <div className="grid-full min-w-0">
@@ -496,7 +506,11 @@ function TeamPanel({ model }: IncidentsDashboardChartsProps) {
           <h3 className="mt-2 text-lg font-black">{t.topResolver}</h3>
           <p className="mt-1 text-sm font-semibold text-[var(--muted)]">{t.closedAndAvgTime}</p>
           <div className="mt-7 flex items-center gap-3">
-            <img src="https://i.pravatar.cc/150?u=resolver" className="size-10 rounded-2xl" alt="" />
+            <img
+              src="https://i.pravatar.cc/150?u=resolver"
+              className="size-10 rounded-2xl"
+              alt=""
+            />
             <b className="min-w-0 flex-1 truncate">{resolver?.label ?? "—"}</b>
             <div className="h-3 flex-[1.4] overflow-hidden rounded-full bg-black/10 dark:bg-white/10">
               <span className="block h-full w-full rounded-full bg-green-500" />
@@ -579,7 +593,11 @@ function IncidentTableRow({ incident }: { incident: Incident }) {
                 : "badge-green",
           ].join(" ")}
         >
-          {incident.priority === "high" ? t.high : incident.priority === "medium" ? t.medium : t.low}
+          {incident.priority === "high"
+            ? t.high
+            : incident.priority === "medium"
+              ? t.medium
+              : t.low}
         </span>
       </td>
       <td className="px-5 py-4">
@@ -593,7 +611,11 @@ function IncidentTableRow({ incident }: { incident: Incident }) {
                 : "badge-orange",
           ].join(" ")}
         >
-          {incident.status === "open" ? t.opened : incident.status === "closed" ? t.closedLabel : t.paused}
+          {incident.status === "open"
+            ? t.opened
+            : incident.status === "closed"
+              ? t.closedLabel
+              : t.paused}
         </span>
       </td>
       <td className="px-5 py-4">
@@ -608,9 +630,7 @@ function IncidentTableRow({ incident }: { incident: Incident }) {
           ))}
         </div>
       </td>
-      <td className="px-5 py-4 text-[var(--muted)] font-bold">
-        {incident.owner.name || "—"}
-      </td>
+      <td className="px-5 py-4 text-[var(--muted)] font-bold">{incident.owner.name || "—"}</td>
       <td className="px-5 py-4">
         <span className="badge badge-red">
           {getOverdueLabel(incident, t.noDate, t.overdueSince)}
@@ -657,20 +677,29 @@ function CriticalPanel({ model }: IncidentsDashboardChartsProps) {
         </div>
         <div className="risk-chip">
           <CalendarClock size={17} />
-          <span>{tableIncidents.length} {t.total.toLowerCase()}</span>
+          <span>
+            {tableIncidents.length} {t.total.toLowerCase()}
+          </span>
         </div>
       </div>
       <div className="hidden overflow-x-auto md:block">
         <table className="w-full min-w-[980px] text-left text-sm">
           <thead className="bg-black/5 text-xs uppercase tracking-[.08em] text-[var(--muted)] dark:bg-white/10">
             <tr>
-              {[t.id, t.tableTitle, t.tablePriority, t.status, t.assignees, t.createdBy, t.expiration, ""].map(
-                (heading) => (
-                  <th key={heading || "actions"} className="px-5 py-4">
-                    {heading}
-                  </th>
-                )
-              )}
+              {[
+                t.id,
+                t.tableTitle,
+                t.tablePriority,
+                t.status,
+                t.assignees,
+                t.createdBy,
+                t.expiration,
+                "",
+              ].map((heading) => (
+                <th key={heading || "actions"} className="px-5 py-4">
+                  {heading}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>

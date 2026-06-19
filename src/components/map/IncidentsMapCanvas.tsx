@@ -3,7 +3,17 @@
 import { useT } from "@/hooks/useT";
 import { useIncidents } from "@/hooks/useIncidents";
 import { useUiStore } from "@/stores/useUiStore";
-import { AlertTriangle, ImageIcon, Layers, LocateFixed, Plus, Ruler, Share2, Building2, Maximize2 } from "lucide-react";
+import {
+  AlertTriangle,
+  ImageIcon,
+  Layers,
+  LocateFixed,
+  Plus,
+  Ruler,
+  Share2,
+  Building2,
+  Maximize2,
+} from "lucide-react";
 import type mapboxgl from "mapbox-gl";
 import type { Incident } from "@/types/incident";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -36,7 +46,15 @@ function isValidMapboxToken(token?: string) {
   return Boolean(token && token.startsWith("pk.") && !token.includes("tu_token"));
 }
 
-function MapUnavailable({ compact, t, incidents = [] }: { compact: boolean; t: ReturnType<typeof useT>; incidents?: Incident[] }) {
+function MapUnavailable({
+  compact,
+  t,
+  incidents = [],
+}: {
+  compact: boolean;
+  t: ReturnType<typeof useT>;
+  incidents?: Incident[];
+}) {
   return (
     <div className="absolute inset-0 map-unavailable">
       <div className="map-unavailable__grid" />
@@ -47,7 +65,10 @@ function MapUnavailable({ compact, t, incidents = [] }: { compact: boolean; t: R
           <span
             key={incident.id}
             className="map-unavailable__pin"
-            style={{ left: `${Math.max(8, Math.min(92, left))}%`, top: `${Math.max(8, Math.min(92, top))}%` }}
+            style={{
+              left: `${Math.max(8, Math.min(92, left))}%`,
+              top: `${Math.max(8, Math.min(92, top))}%`,
+            }}
             title={incident.title}
           >
             !
@@ -233,7 +254,6 @@ function MapboxLayer({
     });
   }, [is3d, mapReady]);
 
-
   useEffect(() => {
     if (!mapRef.current || !mapReady || !focusLocation || focusLocation.signal === 0) return;
 
@@ -252,7 +272,14 @@ function MapboxLayer({
 /**
  * Mapbox GL canvas with graceful fallback when the public token is missing.
  */
-export function IncidentsMapCanvas({ compact = false, picker = false, incidents, focusLocation, bimComparison = false, onPick }: IncidentsMapCanvasProps) {
+export function IncidentsMapCanvas({
+  compact = false,
+  picker = false,
+  incidents,
+  focusLocation,
+  bimComparison = false,
+  onPick,
+}: IncidentsMapCanvasProps) {
   const t = useT();
   const [zoomSignal, setZoomSignal] = useState(0);
   const [centerSignal, setCenterSignal] = useState(0);
@@ -262,11 +289,12 @@ export function IncidentsMapCanvas({ compact = false, picker = false, incidents,
   const setModal = useUiStore((state) => state.setModal);
   const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
   const dark = useUiStore((state) => state.dark);
-  const mapStyle = mapLayer === "satellite"
-    ? "mapbox://styles/mapbox/satellite-streets-v12"
-    : dark
-      ? "mapbox://styles/mapbox/dark-v11"
-      : "mapbox://styles/mapbox/streets-v12";
+  const mapStyle =
+    mapLayer === "satellite"
+      ? "mapbox://styles/mapbox/satellite-streets-v12"
+      : dark
+        ? "mapbox://styles/mapbox/dark-v11"
+        : "mapbox://styles/mapbox/streets-v12";
   const canRenderMapbox = isValidMapboxToken(token) && !mapUnavailable;
 
   const heightClass = compact
@@ -383,7 +411,9 @@ export function IncidentsMapCanvas({ compact = false, picker = false, incidents,
 
           <button
             className="map-tool-button"
-            onClick={() => setMapLayer((value) => (value === "satellite" ? "default" : "satellite"))}
+            onClick={() =>
+              setMapLayer((value) => (value === "satellite" ? "default" : "satellite"))
+            }
             aria-label={t.imageLayer}
             title={t.imageLayer}
           >
@@ -419,13 +449,19 @@ export function IncidentsMapCanvas({ compact = false, picker = false, incidents,
           ].join(" ")}
         >
           <button
-            className={["rounded-xl px-3 py-2 text-sm font-black md:px-5", !is3d ? "bg-bee-400 text-black" : ""].join(" ")}
+            className={[
+              "rounded-xl px-3 py-2 text-sm font-black md:px-5",
+              !is3d ? "bg-bee-400 text-black" : "",
+            ].join(" ")}
             onClick={() => setIs3d(false)}
           >
             2D
           </button>
           <button
-            className={["rounded-xl px-3 py-2 text-sm font-black md:px-5", is3d ? "bg-bee-400 text-black" : ""].join(" ")}
+            className={[
+              "rounded-xl px-3 py-2 text-sm font-black md:px-5",
+              is3d ? "bg-bee-400 text-black" : "",
+            ].join(" ")}
             onClick={() => setIs3d(true)}
           >
             3D

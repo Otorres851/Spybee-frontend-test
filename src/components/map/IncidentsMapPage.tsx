@@ -31,8 +31,12 @@ function getFilterOptions(incidents: ReturnType<typeof useIncidents>["incidents"
   const keepString = (value: string | undefined): value is string => Boolean(value);
 
   return {
-    users: Array.from(new Set(userNames.filter(keepString))).sort((a, b) => a.localeCompare(b, "es")),
-    companies: Array.from(new Set(companyNames.filter(keepString))).sort((a, b) => a.localeCompare(b, "es")),
+    users: Array.from(new Set(userNames.filter(keepString))).sort((a, b) =>
+      a.localeCompare(b, "es")
+    ),
+    companies: Array.from(new Set(companyNames.filter(keepString))).sort((a, b) =>
+      a.localeCompare(b, "es")
+    ),
   };
 }
 
@@ -51,7 +55,10 @@ export function IncidentsMapPage() {
   const [bimComparison, setBimComparison] = useState(false);
 
   const filterOptions = useMemo(() => getFilterOptions(incidents), [incidents]);
-  const filteredIncidents = useMemo(() => buildDashboardModel(incidents, filters).incidents, [filters, incidents]);
+  const filteredIncidents = useMemo(
+    () => buildDashboardModel(incidents, filters).incidents,
+    [filters, incidents]
+  );
   const recentVisits = useMemo(() => {
     return [...filteredIncidents]
       .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
@@ -74,7 +81,11 @@ export function IncidentsMapPage() {
           ].join(" ")}
         >
           <div className="relative min-w-0 sm:shrink-0">
-            <Button variant="ghost" onClick={() => setFiltersOpen((current) => !current)} aria-label={t.activeFilters}>
+            <Button
+              variant="ghost"
+              onClick={() => setFiltersOpen((current) => !current)}
+              aria-label={t.activeFilters}
+            >
               <Filter size={18} />
               <span className="hidden sm:inline">{t.activeFilters}</span>
             </Button>
@@ -125,7 +136,9 @@ export function IncidentsMapPage() {
                     type="button"
                     className={[
                       "size-2.5 rounded-full transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bee-400/70",
-                      index === 0 ? "bg-bee-400" : "bg-black/25 hover:bg-bee-400 dark:bg-white/35 dark:hover:bg-bee-400",
+                      index === 0
+                        ? "bg-bee-400"
+                        : "bg-black/25 hover:bg-bee-400 dark:bg-white/35 dark:hover:bg-bee-400",
                     ].join(" ")}
                     title={incident.title}
                     aria-label={`${t.lastVisits}: ${incident.title}`}
@@ -168,7 +181,9 @@ export function IncidentsMapPage() {
                   type="button"
                   className={[
                     "size-2.5 rounded-full transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bee-400/70",
-                    index === 0 ? "bg-bee-400" : "bg-black/25 hover:bg-bee-400 dark:bg-white/35 dark:hover:bg-bee-400",
+                    index === 0
+                      ? "bg-bee-400"
+                      : "bg-black/25 hover:bg-bee-400 dark:bg-white/35 dark:hover:bg-bee-400",
                   ].join(" ")}
                   title={incident.title}
                   aria-label={`${t.lastVisits}: ${incident.title}`}
@@ -184,7 +199,11 @@ export function IncidentsMapPage() {
             </div>
           </div>
         </div>
-        <IncidentsMapCanvas incidents={filteredIncidents} focusLocation={focusedVisit} bimComparison={bimComparison} />
+        <IncidentsMapCanvas
+          incidents={filteredIncidents}
+          focusLocation={focusedVisit}
+          bimComparison={bimComparison}
+        />
         <CreateIncidentModal />
       </div>
     </AppShell>

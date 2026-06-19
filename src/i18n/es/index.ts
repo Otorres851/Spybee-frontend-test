@@ -157,7 +157,8 @@ export const es = {
   loginSubtitle: "Accede al panel de incidencias del proyecto.",
   loginEyebrow: "Frontend Technical Test",
   loginHeroTitle: "Gestiona incidencias con visión geográfica.",
-  loginHeroDescription: "Crea, filtra y analiza incidencias de obra desde un flujo visual, responsive y preparado para equipos de construcción.",
+  loginHeroDescription:
+    "Crea, filtra y analiza incidencias de obra desde un flujo visual, responsive y preparado para equipos de construcción.",
   loginMetricsLabel: "Métricas destacadas",
   loginMetricIncidents: "incidencias mock",
   loginMetricTracking: "seguimiento visual",

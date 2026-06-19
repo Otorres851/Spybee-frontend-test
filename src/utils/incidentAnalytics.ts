@@ -77,7 +77,9 @@ function normalizeUser(user: any, fallbackName: string) {
   return {
     name: String(user?.name ?? fallbackName),
     email: String(user?.email ?? ""),
-    avatarUrl: String(user?.avatarUrl ?? `https://i.pravatar.cc/80?u=${encodeURIComponent(fallbackName)}`),
+    avatarUrl: String(
+      user?.avatarUrl ?? `https://i.pravatar.cc/80?u=${encodeURIComponent(fallbackName)}`
+    ),
   };
 }
 
@@ -106,10 +108,14 @@ export function normalizeIncident(raw: any, index = 0): Incident {
     owner: normalizeUser(raw?.owner, "Usuario"),
     whatsappOwner: raw?.whatsappOwner ?? null,
     assignees: Array.isArray(raw?.assignees)
-      ? raw.assignees.map((user: any, userIndex: number) => normalizeUser(user, `Asignado ${userIndex + 1}`))
+      ? raw.assignees.map((user: any, userIndex: number) =>
+          normalizeUser(user, `Asignado ${userIndex + 1}`)
+        )
       : [],
     observers: Array.isArray(raw?.observers)
-      ? raw.observers.map((user: any, userIndex: number) => normalizeUser(user, `Observador ${userIndex + 1}`))
+      ? raw.observers.map((user: any, userIndex: number) =>
+          normalizeUser(user, `Observador ${userIndex + 1}`)
+        )
       : [],
     media: Array.isArray(raw?.media) ? raw.media : [],
     tags: Array.isArray(raw?.tags)
@@ -137,7 +143,9 @@ export function sortIncidentsBySequence(incidents: Incident[]) {
 }
 
 export function normalizeIncidents(raw: unknown): Incident[] {
-  return Array.isArray(raw) ? sortIncidentsBySequence(raw.map(normalizeIncident)) : sortIncidentsBySequence(fallbackIncidents);
+  return Array.isArray(raw)
+    ? sortIncidentsBySequence(raw.map(normalizeIncident))
+    : sortIncidentsBySequence(fallbackIncidents);
 }
 
 export function getPeriodDays(label: string): PeriodValue {
@@ -178,7 +186,11 @@ function getEmailCompany(email?: string) {
 
 function getKnownUserCompany(name?: string) {
   const normalized = name?.toLowerCase() ?? "";
-  if (/(julian lozano|julian rico|demo late|juan sebastian|alejandro test|diego andrés|diego andres)/.test(normalized)) {
+  if (
+    /(julian lozano|julian rico|demo late|juan sebastian|alejandro test|diego andrés|diego andres)/.test(
+      normalized
+    )
+  ) {
     return "spybee";
   }
   return "constructora";
@@ -233,23 +245,34 @@ function filterByPeopleAndCompany(incidents: Incident[], filters: DashboardFilte
     const createdByCompany = companyMatches(ownerCompanies, filters.createdCompany);
     const responsibleByCompany = companyMatches(assigneeCompanies, filters.responsibleCompany);
     const createdByUser = includesText(incident.owner.name, filters.createdUser);
-    const responsibleByUser = !filters.responsibleUser || incident.assignees.some((assignee) => includesText(assignee.name, filters.responsibleUser));
+    const responsibleByUser =
+      !filters.responsibleUser ||
+      incident.assignees.some((assignee) => includesText(assignee.name, filters.responsibleUser));
 
     return createdByCompany && responsibleByCompany && createdByUser && responsibleByUser;
   });
 }
 
-export function filterIncidents(incidents: Incident[], filters: DashboardFilters, referenceDate = getReferenceDate(incidents)) {
+export function filterIncidents(
+  incidents: Incident[],
+  filters: DashboardFilters,
+  referenceDate = getReferenceDate(incidents)
+) {
   const from = getPeriodStart(referenceDate, filters.periodDays);
-  return filterByPeopleAndCompany(incidents, filters).filter((incident) => isIncidentActiveInPeriod(incident, from, referenceDate));
+  return filterByPeopleAndCompany(incidents, filters).filter((incident) =>
+    isIncidentActiveInPeriod(incident, from, referenceDate)
+  );
 }
 
 function countBy<T extends string>(items: Incident[], getKey: (incident: Incident) => T) {
-  return items.reduce<Record<T, number>>((acc, incident) => {
-    const key = getKey(incident);
-    acc[key] = (acc[key] ?? 0) + 1;
-    return acc;
-  }, {} as Record<T, number>);
+  return items.reduce<Record<T, number>>(
+    (acc, incident) => {
+      const key = getKey(incident);
+      acc[key] = (acc[key] ?? 0) + 1;
+      return acc;
+    },
+    {} as Record<T, number>
+  );
 }
 
 function countItems(items: string[], limit = 8): CountItem[] {
@@ -279,7 +302,11 @@ function getAvgResolutionDays(incidents: Incident[]) {
   return Number((total / closed.length).toFixed(1));
 }
 
-function getTrend(incidents: Incident[], periodDays: PeriodValue, referenceDate: Date): TrendItem[] {
+function getTrend(
+  incidents: Incident[],
+  periodDays: PeriodValue,
+  referenceDate: Date
+): TrendItem[] {
   const points = periodDays <= 15 ? 5 : periodDays <= 30 ? 6 : 8;
   const step = Math.max(1, Math.floor(periodDays / points));
   let backlog = 0;
@@ -306,15 +333,22 @@ function getTrend(incidents: Incident[], periodDays: PeriodValue, referenceDate:
   });
 }
 
-export function buildDashboardModel(incidents: Incident[], filters: DashboardFilters): DashboardModel {
+export function buildDashboardModel(
+  incidents: Incident[],
+  filters: DashboardFilters
+): DashboardModel {
   const sortedAll = sortIncidentsBySequence(incidents);
   const referenceDate = getReferenceDate(sortedAll);
   const from = getPeriodStart(referenceDate, filters.periodDays);
   const filtered = filterIncidents(sortedAll, filters, referenceDate);
   const dimensionFiltered = filterByPeopleAndCompany(sortedAll, filters);
   const filteredActive = filtered.filter((incident) => incident.status !== "closed");
-  const created = dimensionFiltered.filter((incident) => isDateInRange(incident.createdAt, from, referenceDate)).length;
-  const closed = dimensionFiltered.filter((incident) => isDateInRange(incident.closingDate, from, referenceDate)).length;
+  const created = dimensionFiltered.filter((incident) =>
+    isDateInRange(incident.createdAt, from, referenceDate)
+  ).length;
+  const closed = dimensionFiltered.filter((incident) =>
+    isDateInRange(incident.closingDate, from, referenceDate)
+  ).length;
   const open = filteredActive.length;
   const overdueActive = filteredActive.filter((incident) => {
     const due = asDate(incident.dueDate);
@@ -355,12 +389,29 @@ export function buildDashboardModel(incidents: Incident[], filters: DashboardFil
     },
     status,
     priority,
-    categories: countItems(filtered.map((incident) => incident.type.name), 8),
-    tags: countItems(filtered.flatMap((incident) => incident.tags.map((tag) => tag.name)), 8),
+    categories: countItems(
+      filtered.map((incident) => incident.type.name),
+      8
+    ),
+    tags: countItems(
+      filtered.flatMap((incident) => incident.tags.map((tag) => tag.name)),
+      8
+    ),
     trend: getTrend(filtered, filters.periodDays, referenceDate),
-    topResolvers: countItems(filtered.flatMap((incident) => (incident.status === "closed" ? incident.assignees.map((assignee) => assignee.name) : [])), 5),
-    topReporters: countItems(filtered.map((incident) => incident.owner.name), 6),
-    workload: countItems(filteredActive.flatMap((incident) => incident.assignees.map((assignee) => assignee.name)), 6),
+    topResolvers: countItems(
+      filtered.flatMap((incident) =>
+        incident.status === "closed" ? incident.assignees.map((assignee) => assignee.name) : []
+      ),
+      5
+    ),
+    topReporters: countItems(
+      filtered.map((incident) => incident.owner.name),
+      6
+    ),
+    workload: countItems(
+      filteredActive.flatMap((incident) => incident.assignees.map((assignee) => assignee.name)),
+      6
+    ),
     risk: {
       overdueToday: overdueActive,
       stale7d,

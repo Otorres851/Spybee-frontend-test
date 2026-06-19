@@ -760,8 +760,7 @@
 
 .summary-donut--multi {
   background:
-    radial-gradient(circle, var(--panel) 0 53%, transparent 54%),
-    conic-gradient(var(--segments));
+    radial-gradient(circle, var(--panel) 0 53%, transparent 54%), conic-gradient(var(--segments));
 }
 
 .summary-donut > div {
@@ -2094,37 +2093,6 @@ body {
 
 /* Responsive rules */
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* Final dashboard interactions polish */
 .calendar-status--created {
   background: var(--blue);
@@ -2379,7 +2347,10 @@ body {
   place-items: center;
   border-radius: 0.95rem;
   color: var(--text);
-  transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease;
 }
 
 .map-tool-button:hover {

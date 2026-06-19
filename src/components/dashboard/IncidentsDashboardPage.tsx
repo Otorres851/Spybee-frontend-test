@@ -30,7 +30,6 @@ import {
   type DashboardFilters,
 } from "@/utils/incidentAnalytics";
 
-
 function parseDate(value?: string | null) {
   if (!value) return null;
   const date = new Date(value);
@@ -50,7 +49,11 @@ function getReferenceDate(incidents: ReturnType<typeof useIncidents>["incidents"
 function formatPeriodLabel(incidents: ReturnType<typeof useIncidents>["incidents"], days: number) {
   const end = getReferenceDate(incidents);
   const start = new Date(end.getTime() - days * 86_400_000);
-  const formatter = new Intl.DateTimeFormat("es-CO", { day: "2-digit", month: "short", year: "numeric" });
+  const formatter = new Intl.DateTimeFormat("es-CO", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
   return `${formatter.format(start)} a ${formatter.format(end)}`.replaceAll(".", "");
 }
 
@@ -88,7 +91,10 @@ export function IncidentsDashboardPage() {
   }, [period]);
 
   const model = useMemo(() => buildDashboardModel(incidents, filters), [incidents, filters]);
-  const periodLabel = useMemo(() => formatPeriodLabel(incidents, filters.periodDays), [incidents, filters.periodDays]);
+  const periodLabel = useMemo(
+    () => formatPeriodLabel(incidents, filters.periodDays),
+    [incidents, filters.periodDays]
+  );
   const calendarDays = useMemo(() => buildCalendarDays(calendarDate), [calendarDate]);
   const filterOptions = useMemo(() => {
     const userNames = incidents.flatMap((incident) => [
@@ -104,8 +110,12 @@ export function IncidentsDashboardPage() {
     const keepString = (value: string | undefined): value is string => Boolean(value);
 
     return {
-      users: Array.from(new Set(userNames.filter(keepString))).sort((a, b) => a.localeCompare(b, "es")),
-      companies: Array.from(new Set(companyNames.filter(keepString))).sort((a, b) => a.localeCompare(b, "es")),
+      users: Array.from(new Set(userNames.filter(keepString))).sort((a, b) =>
+        a.localeCompare(b, "es")
+      ),
+      companies: Array.from(new Set(companyNames.filter(keepString))).sort((a, b) =>
+        a.localeCompare(b, "es")
+      ),
     };
   }, [incidents]);
   const activity = [
@@ -245,7 +255,9 @@ export function IncidentsDashboardPage() {
                     <CalendarDays size={16} />
                     {t.activity}
                   </div>
-                  <h3 className="text-xl font-black tracking-[-.03em]">{calendarDate.toLocaleDateString("es-CO", { month: "long", year: "numeric" })}</h3>
+                  <h3 className="text-xl font-black tracking-[-.03em]">
+                    {calendarDate.toLocaleDateString("es-CO", { month: "long", year: "numeric" })}
+                  </h3>
                 </div>
                 <div className="relative">
                   <button
@@ -260,19 +272,25 @@ export function IncidentsDashboardPage() {
                   </button>
                   {calendarPickerOpen && (
                     <div className="calendar-month-popover">
-                      {Array.from({ length: 6 }, (_, index) => new Date(2026, index, 1)).map((date) => (
-                        <button
-                          key={date.toISOString()}
-                          type="button"
-                          className={date.getMonth() === calendarDate.getMonth() ? "is-selected" : undefined}
-                          onClick={() => {
-                            setCalendarDate(date);
-                            setCalendarPickerOpen(false);
-                          }}
-                        >
-                          {date.toLocaleDateString("es-CO", { month: "long", year: "numeric" })}
-                        </button>
-                      ))}
+                      {Array.from({ length: 6 }, (_, index) => new Date(2026, index, 1)).map(
+                        (date) => (
+                          <button
+                            key={date.toISOString()}
+                            type="button"
+                            className={
+                              date.getMonth() === calendarDate.getMonth()
+                                ? "is-selected"
+                                : undefined
+                            }
+                            onClick={() => {
+                              setCalendarDate(date);
+                              setCalendarPickerOpen(false);
+                            }}
+                          >
+                            {date.toLocaleDateString("es-CO", { month: "long", year: "numeric" })}
+                          </button>
+                        )
+                      )}
                     </div>
                   )}
                   <input
@@ -321,14 +339,16 @@ export function IncidentsDashboardPage() {
                       const incidentDate = parseDate(value);
                       return Boolean(
                         date &&
-                          incidentDate &&
-                          incidentDate.getFullYear() === date.getFullYear() &&
-                          incidentDate.getMonth() === date.getMonth() &&
-                          incidentDate.getDate() === date.getDate()
+                        incidentDate &&
+                        incidentDate.getFullYear() === date.getFullYear() &&
+                        incidentDate.getMonth() === date.getMonth() &&
+                        incidentDate.getDate() === date.getDate()
                       );
                     };
                     const created = model.incidents.some((incident) => sameDay(incident.createdAt));
-                    const closed = model.incidents.some((incident) => sameDay(incident.closingDate));
+                    const closed = model.incidents.some((incident) =>
+                      sameDay(incident.closingDate)
+                    );
                     const overdue = model.incidents.some(
                       (incident) => incident.status !== "closed" && sameDay(incident.dueDate)
                     );

@@ -70,11 +70,28 @@ La aplicación permite crear incidencias georreferenciadas sobre un mapa interac
 - Next.js
 - TypeScript
 - Zustand
-- SCSS Modules
+- SCSS Modules (estilos principales)
+- Tailwind CSS (utilidades y sistema de diseño)
 - Mapbox GL
 - i18next
 - react-i18next
-- Tailwind CSS
+- Jest
+
+---
+
+## 🧪 Testing
+
+Se incluye una prueba unitaria de ejemplo utilizando Jest para validar lógica de negocio relacionada con el cálculo de KPIs de incidencias.
+
+Tecnologías:
+
+- Jest
+
+Ejecutar pruebas:
+
+```bash
+pnpm test
+```
 
 ---
 
@@ -112,6 +129,7 @@ pnpm dev
 pnpm lint
 pnpm build
 pnpm start
+pnpm test
 ```
 
 ---
@@ -133,7 +151,7 @@ NEXT_PUBLIC_INCIDENTS_MOCK_URL=your_incidents_mock_url
 ### .env.example
 
 ```env
-NEXT_PUBLIC_MAPBOX_TOKEN=your_mapbox_token
+NEXT_PUBLIC_MAPBOX_TOKEN=pk...your_mapbox_token
 NEXT_PUBLIC_INCIDENTS_MOCK_URL=your_incidents_mock_url
 ```
 
@@ -208,6 +226,7 @@ src
 ```bash
 pnpm lint
 pnpm build
+pnpm test
 ```
 
 ---

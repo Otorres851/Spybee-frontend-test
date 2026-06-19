@@ -157,7 +157,8 @@ export const en = {
   loginSubtitle: "Access the project incident dashboard.",
   loginEyebrow: "Frontend Technical Test",
   loginHeroTitle: "Manage incidents with geographic context.",
-  loginHeroDescription: "Create, filter and analyze construction incidents through a visual, responsive workflow built for field teams.",
+  loginHeroDescription:
+    "Create, filter and analyze construction incidents through a visual, responsive workflow built for field teams.",
   loginMetricsLabel: "Highlighted metrics",
   loginMetricIncidents: "mock incidents",
   loginMetricTracking: "visual tracking",

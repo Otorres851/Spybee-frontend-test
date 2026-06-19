@@ -100,7 +100,15 @@ export function CreateIncidentModal() {
 
   const handleCreate = () => {
     setSubmitted(true);
-    if (!title.trim() || !description.trim() || !category.trim() || !priority.trim() || !Number.isFinite(location.lat) || !Number.isFinite(location.lng)) return;
+    if (
+      !title.trim() ||
+      !description.trim() ||
+      !category.trim() ||
+      !priority.trim() ||
+      !Number.isFinite(location.lat) ||
+      !Number.isFinite(location.lng)
+    )
+      return;
     const maxCreatedSequence = createdIncidents.reduce((max, incident) => {
       const sequence = Number(incident.sequenceId);
       return Number.isFinite(sequence) ? Math.max(max, sequence) : max;
@@ -172,7 +180,9 @@ export function CreateIncidentModal() {
 
         <div className="incident-modal__body">
           <section className="incident-modal__section">
-            <label className={`incident-field incident-field--full ${requiredErrors.title ? "is-invalid" : ""}`}>
+            <label
+              className={`incident-field incident-field--full ${requiredErrors.title ? "is-invalid" : ""}`}
+            >
               <span className="required">
                 * <b>{t.title}</b>
               </span>
@@ -182,9 +192,13 @@ export function CreateIncidentModal() {
                 placeholder={t.title}
                 aria-invalid={requiredErrors.title}
               />
-              {requiredErrors.title && <small className="incident-field__error">{t.requiredField}</small>}
+              {requiredErrors.title && (
+                <small className="incident-field__error">{t.requiredField}</small>
+              )}
             </label>
-            <label className={`incident-field incident-field--full ${requiredErrors.description ? "is-invalid" : ""}`}>
+            <label
+              className={`incident-field incident-field--full ${requiredErrors.description ? "is-invalid" : ""}`}
+            >
               <span className="required">
                 * <b>{t.description}</b>
               </span>
@@ -195,7 +209,9 @@ export function CreateIncidentModal() {
                 placeholder={t.description}
                 aria-invalid={requiredErrors.description}
               />
-              {requiredErrors.description && <small className="incident-field__error">{t.requiredField}</small>}
+              {requiredErrors.description && (
+                <small className="incident-field__error">{t.requiredField}</small>
+              )}
             </label>
           </section>
 
@@ -210,7 +226,9 @@ export function CreateIncidentModal() {
               />
             </label>
 
-            <div className={`incident-field incident-field--wide ${requiredErrors.category ? "is-invalid" : ""}`}>
+            <div
+              className={`incident-field incident-field--wide ${requiredErrors.category ? "is-invalid" : ""}`}
+            >
               <span className="required">
                 * <b>{t.category}</b>
               </span>
@@ -226,7 +244,9 @@ export function CreateIncidentModal() {
                   {t.manageCategories}
                 </Button>
               </div>
-              {requiredErrors.category && <small className="incident-field__error">{t.requiredField}</small>}
+              {requiredErrors.category && (
+                <small className="incident-field__error">{t.requiredField}</small>
+              )}
             </div>
 
             <div className={`incident-field ${requiredErrors.priority ? "is-invalid" : ""}`}>
@@ -239,7 +259,9 @@ export function CreateIncidentModal() {
                 options={priorityOptions}
                 onChange={setPriority}
               />
-              {requiredErrors.priority && <small className="incident-field__error">{t.requiredField}</small>}
+              {requiredErrors.priority && (
+                <small className="incident-field__error">{t.requiredField}</small>
+              )}
             </div>
           </section>
 
@@ -364,7 +386,9 @@ export function CreateIncidentModal() {
                       <button
                         type="button"
                         aria-label={t.removeFile}
-                        onClick={() => setFiles((current) => current.filter((item) => item !== file))}
+                        onClick={() =>
+                          setFiles((current) => current.filter((item) => item !== file))
+                        }
                       >
                         <X size={14} />
                       </button>
@@ -390,7 +414,9 @@ export function CreateIncidentModal() {
           <Button type="button" variant="ghost" onClick={close}>
             {t.cancel}
           </Button>
-          {submitted && hasErrors && <small className="incident-form-error">{t.requiredFieldsHint}</small>}
+          {submitted && hasErrors && (
+            <small className="incident-form-error">{t.requiredFieldsHint}</small>
+          )}
           <Button type="button" onClick={handleCreate}>
             {t.createIncident}
           </Button>

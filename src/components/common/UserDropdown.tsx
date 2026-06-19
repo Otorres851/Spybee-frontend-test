@@ -33,7 +33,12 @@ export function UserDropdown() {
         <ChevronDown size={14} />
       </button>
 
-      <button type="button" className={styles.logoutButton} onClick={handleLogout} aria-label={t.logout}>
+      <button
+        type="button"
+        className={styles.logoutButton}
+        onClick={handleLogout}
+        aria-label={t.logout}
+      >
         <LogOut size={15} />
         <span>{t.logout}</span>
       </button>

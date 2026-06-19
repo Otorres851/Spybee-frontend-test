@@ -1,0 +1,25 @@
+.main {
+  min-height: 100vh;
+  padding-top: 4.5rem;
+  padding-bottom: 6rem;
+}
+
+.authLoader {
+  min-height: 100dvh;
+  background:
+    radial-gradient(circle at center, rgba(255, 196, 0, 0.22), transparent 18rem),
+    var(--bg);
+}
+
+@media (min-width: 48rem) {
+  .main {
+    padding-top: 4.75rem;
+  }
+}
+
+@media (min-width: 64rem) {
+  .main {
+    padding-left: 5.125rem;
+    padding-bottom: 0;
+  }
+}

@@ -1,0 +1,48 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 0;
+  border-radius: 0.9rem;
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 800;
+  transition:
+    transform 0.18s ease,
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.primary {
+  background: var(--bee);
+  color: #111;
+  box-shadow: var(--shadow);
+
+  &:hover {
+    filter: saturate(1.06) brightness(0.98);
+  }
+}
+
+.ghost {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  height: 3.1rem;
+
+  &:hover {
+    background: color-mix(in srgb, var(--text) 5%, transparent);
+  }
+}
+
+.soft {
+  background: color-mix(in srgb, var(--text) 6%, transparent);
+
+  &:hover {
+    background: color-mix(in srgb, var(--text) 10%, transparent);
+  }
+}

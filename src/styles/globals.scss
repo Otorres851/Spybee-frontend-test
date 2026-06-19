@@ -1,0 +1,119 @@
+@use "./mixins" as *;
+@use "./components/app-sections";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #f4f2ee;
+  --panel: #ffffff;
+  --panel-2: #fafafa;
+  --text: #242424;
+  --muted: #8d8d8d;
+  --line: #e7e3dc;
+  --bee: #ffc400;
+  --bee-soft: #fff5c8;
+  --danger: #ff4b45;
+  --blue: #2483f3;
+  --green: #32c765;
+  --orange: #ff7a1a;
+  --shadow: 0 18px 50px rgba(22, 22, 22, 0.08);
+  --topbar: #303030;
+}
+
+.dark {
+  --bg: #09111f;
+  --panel: #0f1b2d;
+  --panel-2: #132238;
+  --text: #f7fbff;
+  --muted: #a8b4c7;
+  --line: #213451;
+  --bee-soft: #463a09;
+  --shadow: 0 22px 80px rgba(0, 0, 0, 0.42);
+  --topbar: #07101d;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: auto;
+  overflow-x: hidden;
+}
+
+html.is-app-ready {
+  scroll-behavior: smooth;
+}
+
+html.is-dashboard-loading {
+  scroll-behavior: auto !important;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  overflow-x: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+select,
+input,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+::selection {
+  background: var(--bee);
+  color: #111;
+}
+
+.glass {
+  background: color-mix(in srgb, var(--panel) 82%, transparent);
+  backdrop-filter: blur(18px);
+}
+
+.spy-card {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.premium-card {
+  @include premium-surface;
+  @include hover-lift;
+}
+
+.skeleton {
+  @include skeleton-shimmer;
+  border-radius: 999px;
+}

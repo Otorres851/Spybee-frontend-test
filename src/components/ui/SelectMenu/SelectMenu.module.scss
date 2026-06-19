@@ -1,0 +1,202 @@
+@use "@/styles/mixins" as *;
+
+.select {
+  position: relative;
+  min-width: 188px;
+  flex: 0 0 auto;
+  z-index: 35;
+}
+
+.selectLarge {
+  width: 100%;
+}
+
+.trigger {
+  display: inline-flex;
+  width: 100%;
+  min-height: 2.9rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: var(--panel);
+  padding: 0.72rem 1rem;
+  font-weight: 950;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.055);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+
+  span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &:hover,
+  &.triggerOpen {
+    border-color: var(--bee);
+    box-shadow: 0 18px 42px rgba(255, 196, 0, 0.12);
+  }
+}
+
+.chevron {
+  flex: 0 0 auto;
+  opacity: 0.55;
+  transition: transform 0.22s ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 0.45rem);
+  left: 0;
+  width: min(24rem, calc(100vw - 2rem));
+  max-height: min(25rem, 70vh);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 1.1rem;
+  background: var(--panel);
+  box-shadow: 0 28px 80px rgba(15, 23, 42, 0.18);
+  padding: 0.38rem;
+  animation: menu-in 0.18s ease both;
+}
+
+.searchBox {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.25rem 0.25rem 0.45rem;
+  border: 1px solid var(--bee);
+  border-radius: 0.9rem;
+  background: var(--panel-2);
+  padding: 0.62rem 0.75rem;
+  color: var(--muted);
+
+  input {
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    font-weight: 850;
+  }
+
+  button {
+    display: grid;
+    width: 1.5rem;
+    aspect-ratio: 1;
+    place-items: center;
+    border: 0;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--muted) 12%, transparent);
+  }
+}
+
+.options {
+  max-height: 18.5rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 0.15rem;
+
+  &::-webkit-scrollbar {
+    width: 0.46rem;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--muted) 52%, transparent);
+  }
+}
+
+.option {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border: 0;
+  border-radius: 0.86rem;
+  background: transparent;
+  padding: 0.8rem 0.9rem;
+  text-align: left;
+  font-weight: 900;
+  transition:
+    background 0.16s ease,
+    color 0.16s ease;
+
+  &:hover {
+    background: color-mix(in srgb, var(--muted) 8%, transparent);
+  }
+}
+
+.optionActive {
+  background: var(--bee-soft);
+  color: #1e1e1e;
+}
+
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-0.4rem) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* QA fix: menu must not be clipped by responsive toolbars */
+.select {
+  isolation: isolate;
+}
+
+.select:has(.menu) {
+  z-index: 170;
+}
+
+.menu {
+  z-index: 180;
+}
+
+@media (max-width: 640px) {
+  .select {
+    min-width: 176px;
+  }
+
+  .trigger {
+    min-height: 2.65rem;
+    border-radius: 0.95rem;
+    padding: 0.62rem 0.85rem;
+    font-size: 0.86rem;
+  }
+
+  .menu {
+    width: min(21rem, calc(100vw - 1.5rem));
+  }
+}
+
+@media (max-width: 640px) {
+  .select {
+    min-width: min(100%, 16.5rem);
+  }
+}
+
+@media (max-width: 640px) {
+  .select {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .menu {
+    right: 0;
+    left: auto;
+    width: 100%;
+  }
+}

@@ -52,7 +52,9 @@ export type DashboardModel = {
   };
 };
 
-const TODAY = new Date();
+function getToday() {
+  return new Date();
+}
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
 function asDate(value?: string | null) {
@@ -215,10 +217,12 @@ function getReferenceDate(incidents: Incident[]) {
     .map(asDate)
     .filter((date): date is Date => Boolean(date));
 
-  if (dates.length === 0) return TODAY;
+  const today = getToday();
+
+  if (dates.length === 0) return today;
 
   const maxDate = new Date(Math.max(...dates.map((date) => date.getTime())));
-  return maxDate > TODAY ? TODAY : maxDate;
+  return maxDate > today ? today : maxDate;
 }
 
 function getPeriodStart(referenceDate: Date, periodDays: PeriodValue) {
@@ -424,6 +428,9 @@ export function buildDashboardModel(
 export function getOverdueLabel(incident: Incident, fallback: string, prefix: string) {
   const due = asDate(incident.dueDate);
   if (!due) return fallback;
-  if (due >= TODAY) return due.toLocaleDateString("es-CO", { day: "2-digit", month: "short" });
-  return `${prefix} ${diffDays(TODAY, due)}d`;
+
+  const today = getToday();
+
+  if (due >= today) return due.toLocaleDateString("es-CO", { day: "2-digit", month: "short" });
+  return `${prefix} ${diffDays(today, due)}d`;
 }

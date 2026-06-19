@@ -153,7 +153,7 @@ NEXT_PUBLIC_INCIDENTS_MOCK_URL=your_incidents_mock_url
 ### .env.example
 
 ```env
-NEXT_PUBLIC_MAPBOX_TOKEN=pk...your_mapbox_token
+NEXT_PUBLIC_MAPBOX_TOKEN=your_mapbox_token
 NEXT_PUBLIC_INCIDENTS_MOCK_URL=your_incidents_mock_url
 ```
 

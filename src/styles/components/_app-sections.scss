@@ -1526,6 +1526,34 @@ body {
   height: 330px !important;
 }
 
+.incident-upload-tabs {
+  display: inline-flex;
+  width: fit-content;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--panel);
+  padding: 0.25rem;
+}
+
+.incident-upload-tabs button {
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  padding: 0.55rem 0.9rem;
+  color: var(--muted);
+  font-weight: 950;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease;
+}
+
+.incident-upload-tabs button:hover,
+.incident-upload-tabs button.is-active {
+  background: var(--bee);
+  color: #1e1e1e;
+}
+
 .incident-upload {
   display: grid;
   place-items: center;
@@ -2168,6 +2196,9 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
   gap: 0.75rem;
+}
+.incident-files--preview-single {
+  grid-template-columns: minmax(8rem, 14rem);
 }
 .incident-file-card {
   position: relative;
@@ -3121,7 +3152,6 @@ body {
   }
 }
 
-/* v12: mobile map QA polish */
 @media (max-width: 640px) {
   .mapbox-incident-marker,
   .map-unavailable__pin {

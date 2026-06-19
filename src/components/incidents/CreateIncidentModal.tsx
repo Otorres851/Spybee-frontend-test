@@ -1,12 +1,12 @@
 "use client";
 
-import { DragEvent, useCallback, useEffect, useMemo, useState } from "react";
-import { Check, ChevronDown, FileUp, Search, UploadCloud, X } from "lucide-react";
-import { useUiStore } from "@/stores/useUiStore";
-import { useT } from "@/hooks/useT";
-import { Button } from "@/components/ui/AppButton";
 import { IncidentsMapCanvas } from "@/components/map/IncidentsMapCanvas";
+import { Button } from "@/components/ui/AppButton";
+import { useT } from "@/hooks/useT";
+import { useUiStore } from "@/stores/useUiStore";
 import type { Incident, Priority } from "@/types/incident";
+import { Check, ChevronDown, FileUp, Search, UploadCloud, X } from "lucide-react";
+import { DragEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 const categories = [
   "Eléctrico",
@@ -40,6 +40,17 @@ const users = [
   "Diego Andrés González Samboni · SPYBEE [Ingeniero Operaciones]",
 ];
 
+function fileToDataUrl(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(reader.error);
+
+    reader.readAsDataURL(file);
+  });
+}
+
 /**
  * Incident creation flow. It supports map picking, multi-selects and file uploads.
  */
@@ -57,7 +68,9 @@ export function CreateIncidentModal() {
   const [observers, setObservers] = useState<string[]>([]);
   const [locationDetails, setLocationDetails] = useState("");
   const [location, setLocation] = useState(draftLocation ?? { lat: 4.65242, lng: -74.05846 });
-  const [files, setFiles] = useState<File[]>([]);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [documentFile, setDocumentFile] = useState<File | null>(null);
+  const [attachmentTab, setAttachmentTab] = useState<"images" | "document">("images");
   const [submitted, setSubmitted] = useState(false);
   const priorityOptions = [t.high, t.medium, t.low];
   const requiredErrors = {
@@ -90,15 +103,29 @@ export function CreateIncidentModal() {
     setModal(false, null);
   };
 
-  const handleDrop = (event: DragEvent<HTMLLabelElement>) => {
-    event.preventDefault();
-    const incoming = Array.from(event.dataTransfer.files).filter((file) =>
-      /image|video|pdf|word|excel|spreadsheet|document/.test(file.type)
-    );
-    setFiles((current) => [...current, ...incoming].slice(0, 5));
+  const addImages = (incomingFiles: File[]) => {
+    const incomingImages = incomingFiles.filter((file) => file.type.startsWith("image/"));
+    setImageFiles((current) => [...current, ...incomingImages].slice(0, 5));
   };
 
-  const handleCreate = () => {
+  const addDocument = (incomingFiles: File[]) => {
+    const pdf = incomingFiles.find(
+      (file) => file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf")
+    );
+    if (pdf) setDocumentFile(pdf);
+  };
+
+  const handleImagesDrop = (event: DragEvent<HTMLLabelElement>) => {
+    event.preventDefault();
+    addImages(Array.from(event.dataTransfer.files));
+  };
+
+  const handleDocumentDrop = (event: DragEvent<HTMLLabelElement>) => {
+    event.preventDefault();
+    addDocument(Array.from(event.dataTransfer.files));
+  };
+
+  const handleCreate = async () => {
     setSubmitted(true);
     if (
       !title.trim() ||
@@ -114,6 +141,33 @@ export function CreateIncidentModal() {
       return Number.isFinite(sequence) ? Math.max(max, sequence) : max;
     }, 200);
     const sequence = String(maxCreatedSequence + 1).padStart(4, "0");
+
+    const now = Date.now();
+
+    const imageMedia = await Promise.all(
+      imageFiles.map(async (file, index) => ({
+        id: `local-media-${now}-${index}`,
+        name: file.name,
+        type: "image",
+        size: file.size,
+        status: "uploaded",
+        url: await fileToDataUrl(file),
+      }))
+    );
+
+    const documentMedia = documentFile
+      ? [
+          {
+            id: `local-document-${now}`,
+            name: documentFile.name,
+            type: "document",
+            format: "pdf",
+            size: documentFile.size,
+            status: "uploaded",
+            url: await fileToDataUrl(documentFile),
+          },
+        ]
+      : [];
     const incident: Incident = {
       id: `local-${Date.now()}`,
       sequenceId: sequence,
@@ -143,14 +197,7 @@ export function CreateIncidentModal() {
       })),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      media: files.map((file, index) => ({
-        id: `local-media-${Date.now()}-${index}`,
-        name: file.name,
-        type: file.type.startsWith("video") ? "video" : "image",
-        size: file.size,
-        status: "uploaded",
-        url: URL.createObjectURL(file),
-      })),
+      media: [...imageMedia, ...documentMedia],
       tags: selectedTags.map((name) => ({ name, color: "#FFC400" })),
     };
     addIncident(incident);
@@ -359,53 +406,89 @@ export function CreateIncidentModal() {
 
           <section className="incident-modal__section">
             <h3>{t.attachedFiles}</h3>
-            <label
-              className="incident-upload"
-              onDrop={handleDrop}
-              onDragOver={(event) => event.preventDefault()}
-            >
-              <UploadCloud size={36} />
-              <strong>{t.dropFiles}</strong>
-              <span>{t.browseFiles}</span>
-              <small>{t.uploadHint}</small>
-              <input
-                hidden
-                multiple
-                max={5}
-                type="file"
-                accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx"
-                onChange={(event) => setFiles(Array.from(event.target.files ?? []).slice(0, 5))}
-              />
-            </label>
-            {files.length > 0 && (
-              <div className="incident-files--preview">
-                {files.map((file) => {
-                  const previewUrl = URL.createObjectURL(file);
-                  return (
-                    <div className="incident-file-card" key={`${file.name}-${file.size}`}>
-                      <button
-                        type="button"
-                        aria-label={t.removeFile}
-                        onClick={() =>
-                          setFiles((current) => current.filter((item) => item !== file))
+            <div className="incident-upload-tabs" role="tablist" aria-label={t.attachedFiles}>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={attachmentTab === "images"}
+                className={attachmentTab === "images" ? "is-active" : undefined}
+                onClick={() => setAttachmentTab("images")}
+              >
+                Imágenes
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={attachmentTab === "document"}
+                className={attachmentTab === "document" ? "is-active" : undefined}
+                onClick={() => setAttachmentTab("document")}
+              >
+                Documento
+              </button>
+            </div>
+
+            {attachmentTab === "images" ? (
+              <>
+                <label
+                  className="incident-upload"
+                  onDrop={handleImagesDrop}
+                  onDragOver={(event) => event.preventDefault()}
+                >
+                  <UploadCloud size={36} />
+                  <strong>{t.dropFiles}</strong>
+                  <span>{t.browseFiles}</span>
+                  <small>Imágenes · máximo 5</small>
+                  <input
+                    hidden
+                    multiple
+                    type="file"
+                    accept="image/*"
+                    onChange={(event) => addImages(Array.from(event.target.files ?? []))}
+                  />
+                </label>
+                {imageFiles.length > 0 && (
+                  <div className="incident-files--preview">
+                    {imageFiles.map((file) => (
+                      <FilePreviewCard
+                        key={`${file.name}-${file.size}-${file.lastModified}`}
+                        file={file}
+                        removeLabel={t.removeFile}
+                        onRemove={() =>
+                          setImageFiles((current) => current.filter((item) => item !== file))
                         }
-                      >
-                        <X size={14} />
-                      </button>
-                      {file.type.startsWith("image") ? (
-                        <img src={previewUrl} alt={file.name} />
-                      ) : file.type.startsWith("video") ? (
-                        <video src={previewUrl} muted />
-                      ) : (
-                        <span className="incident-file-card__fallback">
-                          <FileUp size={24} />
-                        </span>
-                      )}
-                      <small title={file.name}>{file.name}</small>
-                    </div>
-                  );
-                })}
-              </div>
+                      />
+                    ))}
+                  </div>
+                )}
+              </>
+            ) : (
+              <>
+                <label
+                  className="incident-upload"
+                  onDrop={handleDocumentDrop}
+                  onDragOver={(event) => event.preventDefault()}
+                >
+                  <FileUp size={36} />
+                  <strong>Documento</strong>
+                  <span>{t.browseFiles}</span>
+                  <small>PDF · máximo 1 archivo</small>
+                  <input
+                    hidden
+                    type="file"
+                    accept="application/pdf,.pdf"
+                    onChange={(event) => addDocument(Array.from(event.target.files ?? []))}
+                  />
+                </label>
+                {documentFile && (
+                  <div className="incident-files--preview incident-files--preview-single">
+                    <FilePreviewCard
+                      file={documentFile}
+                      removeLabel={t.removeFile}
+                      onRemove={() => setDocumentFile(null)}
+                    />
+                  </div>
+                )}
+              </>
             )}
           </section>
         </div>
@@ -437,10 +520,16 @@ type FieldDropdownProps = {
 function FieldDropdown({ placeholder, value, options, colored, onChange }: FieldDropdownProps) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const ref = useRef<HTMLDivElement>(null);
   const filtered = options.filter((option) => option.toLowerCase().includes(query.toLowerCase()));
 
+  useCloseOnOutsideClick(ref, () => {
+    setOpen(false);
+    setQuery("");
+  });
+
   return (
-    <div className="incident-select">
+    <div className="incident-select" ref={ref}>
       <button
         type="button"
         className={`incident-select__trigger ${open ? "is-open" : ""}`}
@@ -503,7 +592,13 @@ function MultiDropdown({
 }: MultiDropdownProps) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const ref = useRef<HTMLDivElement>(null);
   const filtered = options.filter((option) => option.toLowerCase().includes(query.toLowerCase()));
+
+  useCloseOnOutsideClick(ref, () => {
+    setOpen(false);
+    setQuery("");
+  });
 
   const toggle = (option: string) => {
     onChange(
@@ -514,7 +609,7 @@ function MultiDropdown({
   };
 
   return (
-    <div className="incident-select">
+    <div className="incident-select" ref={ref}>
       <div
         role="button"
         tabIndex={0}
@@ -588,6 +683,52 @@ function MultiDropdown({
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function useCloseOnOutsideClick(ref: React.RefObject<HTMLElement | null>, onClose: () => void) {
+  useEffect(() => {
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!ref.current?.contains(event.target as Node)) onClose();
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => document.removeEventListener("pointerdown", handlePointerDown);
+  }, [onClose, ref]);
+}
+
+function FilePreviewCard({
+  file,
+  removeLabel,
+  onRemove,
+}: {
+  file: File;
+  removeLabel: string;
+  onRemove: () => void;
+}) {
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!file.type.startsWith("image/")) return;
+    const url = URL.createObjectURL(file);
+    setPreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [file]);
+
+  return (
+    <div className="incident-file-card">
+      <button type="button" aria-label={removeLabel} onClick={onRemove}>
+        <X size={14} />
+      </button>
+      {previewUrl ? (
+        <img src={previewUrl} alt={file.name} />
+      ) : (
+        <span className="incident-file-card__fallback">
+          <FileUp size={24} />
+        </span>
+      )}
+      <small title={file.name}>{file.name}</small>
     </div>
   );
 }

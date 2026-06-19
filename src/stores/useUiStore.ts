@@ -1,9 +1,9 @@
 "use client";
 
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
 import type { Lang } from "@/i18n";
 import type { Incident } from "@/types/incident";
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 type DraftLocation = {
   lat: number;
@@ -57,7 +57,17 @@ export const useUiStore = create<UiState>()(
       partialize: (state) => ({
         lang: state.lang,
         dark: state.dark,
-        createdIncidents: state.createdIncidents,
+        createdIncidents: state.createdIncidents.map((incident) => ({
+          ...incident,
+          media: incident.media?.map((file) => ({
+            id: file.id,
+            name: file.name,
+            type: file.type,
+            format: file.format,
+            size: file.size,
+            status: file.status,
+          })),
+        })),
       }),
     }
   )

@@ -1,3 +1,5 @@
+<img width="1536" height="1024" alt="Image" src="https://github.com/user-attachments/assets/1a84285c-3132-40b2-ab80-e3854dd59eae" />
+
 # 🐝 Spybee Incident Management Platform
 
 Sistema de gestión de incidencias para proyectos de construcción desarrollado como prueba técnica para el cargo de **Frontend Developer en Spybee**.
